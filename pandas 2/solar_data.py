@@ -1,18 +1,19 @@
 import pandas as pd
 import sqlite3 
+import matplotlib.pyplot as plt
 
-# Connect to DB
-conn = sqlite3.connect("./databases/db.sql")
-cursor = conn.cursor()
+# # Connect to DB
+# conn = sqlite3.connect("./databases/db.sql")
+# cursor = conn.cursor()
 
 # Load Datasets 
 energy_df = pd.read_csv('./data/energy.csv')
 weather_df = pd.read_csv('./data/weather.csv')
 
 # See the first 5 rows 
-print("Energy_Sample:")
-example = energy_df.head()
-print(example)
+# print("Energy_Sample:")
+# example = energy_df.head()
+# print(example)
 
 # Statistics for the energy
 energy_mean = energy_df.mean()
@@ -36,3 +37,15 @@ stats_df = pd.DataFrame({
 #Save Statistics to database
 table_name='energy_weather_stats'
 stats_df.to_sql(table_name,conn,if_exists='replaces',)
+
+merge_df=pd.merge(energy_df,weather_df,how="inner")
+
+#characteristics 
+plt.figure(figsize=(5,5))
+plt.xlabel("timestamp")
+plt.ylabel("poweroutput")
+plt.title("Power Over Time")
+# Make plot chart using pyplot
+plt.boxplot(energy_df["TOTAL_YIELD"].dropna())
+plt.legend()
+plt.show()
